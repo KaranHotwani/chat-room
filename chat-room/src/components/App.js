@@ -34,7 +34,7 @@ function App() {
   }
   socket.on("received-msg",(message)=>{
     console.log("received-msg",message);
-    updateChats([...chats,message]);
+    updateChats([...chats,message.chat]);
   })
   return (
     
