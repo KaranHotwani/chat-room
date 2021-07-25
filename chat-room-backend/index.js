@@ -8,5 +8,6 @@ io.on("connection",socket=>{
     console.log(socket.id);
     socket.on("chat",(chat)=>{
         console.log("received chat",chat);
+        socket.broadcast.emit("received-msg",chat);
     })
 })

@@ -10,6 +10,13 @@
     /* margin-bottom: 182px; */
     height: 30px;
 }
+.create-room-btn{
+    background-color:cornflowerblue;
+    margin-left: 5%;
+    margin-top: 5%;
+    /* margin-bottom: 182px; */
+    height: 30px;
+}
 .center-div{
     margin: 10%;
     border: 2px solid black;

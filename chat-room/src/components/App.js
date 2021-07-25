@@ -3,12 +3,12 @@ import { useState } from "react";
 import ChatBox from './chatBox';
 import HomePage from './HomePage';
 import { io } from "socket.io-client";
-function App() {
-  
-  const socket = io("http://localhost:3001");
+const socket = io("http://localhost:3001");
   socket.on("connect",()=>{
     console.log('connected to server with socket'+socket.id);
   })
+function App() {
+  
   // eslint-disable-next-line
   const [chats,updateChats] = useState([{id:1,chatData:"Hi Karan"}]);
   const listItems = chats.map(chat=>{
@@ -32,6 +32,10 @@ function App() {
     updateChats([...chats,chat]);
     socket.emit("chat",{chat});
   }
+  socket.on("received-msg",(message)=>{
+    console.log("received-msg",message);
+    updateChats([...chats,message]);
+  })
   return (
     
     <div className="App">
