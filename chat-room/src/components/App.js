@@ -1,8 +1,14 @@
 import './App.css';
 import { useState } from "react";
 import ChatBox from './chatBox';
+import HomePage from './HomePage';
+import { io } from "socket.io-client";
 function App() {
   
+  const socket = io("http://localhost:3001");
+  socket.on("connect",()=>{
+    console.log('connected to server with socket'+socket.id);
+  })
   // eslint-disable-next-line
   const [chats,updateChats] = useState([{id:1,chatData:"Hi Karan"}]);
   const listItems = chats.map(chat=>{
@@ -22,17 +28,20 @@ function App() {
   const updateChatFn = (data)=>{
     console.log("dataaa",data)
     const id = Math.floor(Math.random()*10000)+1;
-    updateChats([...chats,{id:id,chatData:data}]);
+    const chat = {id:id,chatData:data}
+    updateChats([...chats,chat]);
+    socket.emit("chat",{chat});
   }
   return (
     
     <div className="App">
-      <h1 className="header"> Welcome to Chat Room</h1>
-      <div className="chats">
-        <ul>{listItems}</ul>
-      </div>
-      
-      <ChatBox updateChatFn={updateChatFn}/>
+        <h1 className="header"> Welcome to Chat Room</h1>
+        <div className="chats">
+          <ul>{listItems}</ul>
+        </div>
+        
+        <ChatBox updateChatFn={updateChatFn}/>
+      {/* <HomePage/> */}
     </div>
   );
 }

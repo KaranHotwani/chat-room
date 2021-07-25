@@ -1,0 +1,18 @@
+.room{
+    width: 80%;
+    margin: 5%;
+    height: 40px;
+}
+.room-btn{
+    background-color:cornflowerblue;
+    margin-left: 5%;
+    margin-top: -30%;
+    /* margin-bottom: 182px; */
+    height: 30px;
+}
+.center-div{
+    margin: 10%;
+    border: 2px solid black;
+    height: 300px;
+    /* width: 75%; */
+}
