@@ -1,0 +1,46 @@
+.App {
+  
+  margin: auto;
+  width: 50%;
+}
+.header{
+  text-align: center;
+  background-color: palegreen;
+  padding: 10px;
+}
+.chats {
+  border:2px solid black;
+  overflow: auto;
+  height: 480px;
+}
+.textArea{
+  width: 50%;
+  /* margin-left: 5%; */
+  height: 30px;
+  position: fixed;
+  bottom: 0;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.btn{
+  background-color:cornflowerblue;
+  margin-left: 52%;
+  margin-top: -30px;
+  margin-bottom: 12px;
+  position: fixed;
+  bottom: 0;
+  height: 30px;
+}
+.container {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+  list-style-type:none;
+  margin-right: 50px;
+}
+.darker {
+  border-color: #ccc;
+  background-color: rgb(150, 146, 146);
+}
