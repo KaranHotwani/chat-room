@@ -1,19 +1,14 @@
 import {useState,useEffect} from 'react'
-import { useHistory, BrowserRouter,Route, Router } from 'react-router-dom';
+import { useHistory} from 'react-router-dom';
 import './HomePage.css'
 import Modal from "react-modal";
 import axios from "axios";
-import App from "./App";
+// import App from "./App";
 export default function HomePage() {
     
     const [text,setText] = useState('');
     const [modalIsOpen,setModalIsOpen] = useState(false);
     let  history = useHistory();
-    const onSubmit = (e)=>{
-        e.preventDefault();
-        // props.updateChatFn(text)
-        setText('');  
-      }
     const setUserNameFn = (e)=>{
         e.preventDefault();
         // setUserName(text);

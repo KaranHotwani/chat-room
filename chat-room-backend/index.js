@@ -17,8 +17,15 @@ const io = require("socket.io")(httpServer, options);
 
 io.on("connection", socket => { 
     console.log(socket.id);
-    socket.on("chat",(chat,room)=>{
+    socket.on("chat",async (chat,room)=>{
         console.log("received chat ",chat," room ",room);
+        await db.collection("rooms").doc(room).collection("chats").doc().set({
+            sentBy:chat.userName,
+            chatData:chat.chatData,
+            id:chat.id,
+            createdAt:admin.firestore.Timestamp.now(),
+            likedBy:[]
+        })
         socket.to(room).emit("received-msg",chat);
     })
     socket.on("join-room",(roomId)=>{
@@ -30,6 +37,25 @@ io.on("connection", socket => {
 app.get("/",(request,response)=>{
     console.log("This is get");
     response.send("This is get");
+})
+
+app.get("/get_chats/:roomId",async(request,response)=>{
+    const roomId = request.params.roomId;
+    try{
+        
+        const querySnapshot = await db.collection("rooms").doc(roomId).collection("chats").orderBy('createdAt','desc').get();
+        const data = querySnapshot.docs.map(doc=>doc.data());
+        response.send({data:data,error:null});
+
+    }
+    catch(e)
+    {
+        console.error(e);
+        if(!response.headersSent)
+        {
+            response.send({data:null,error:e})
+        }
+    }
 })
 
 app.post("/create-room",async(request,response)=>{
@@ -91,6 +117,40 @@ app.post("/join-room",async(request,response)=>{
         if(!response.headersSent)
         {
             response.send({roomJoined:false,error:e})
+        }
+    }
+})
+
+app.post("/like-chat",async(request,response)=>{
+    const body = request.body;
+    console.log(body);
+    try{
+        if(!body.hasOwnProperty("roomId"))
+        {
+            throw Error("Missing roomId in body")
+        }
+        if(!body.hasOwnProperty("userName"))
+        {
+            throw Error("Missing userName in body")
+        }
+        if(!body.hasOwnProperty("chatId"))
+        {
+            throw Error("Missing chatId in body")
+        }
+        await db.collection("rooms").doc(body.roomId)
+            .collection("chats").doc(body.chatId)
+            .update({
+                likedBy: admin.firestore.FieldValue.arrayUnion(body.userName)
+            });
+        response.send({liked:true,error:null})
+        
+
+    }
+    catch(e)
+    {
+        if(!response.headersSent)
+        {
+            response.send({liked:false,error:e})
         }
     }
 })
