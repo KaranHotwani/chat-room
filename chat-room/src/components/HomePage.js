@@ -2,6 +2,7 @@ import {useState,useEffect} from 'react'
 import { useHistory, BrowserRouter,Route, Router } from 'react-router-dom';
 import './HomePage.css'
 import Modal from "react-modal";
+import axios from "axios";
 import App from "./App";
 export default function HomePage() {
     
@@ -20,11 +21,39 @@ export default function HomePage() {
         setText(''); 
         setModalIsOpen(false);
     }
-    const createRoom = (e)=>{
+    const createRoom = async (e)=>{
         e.preventDefault();
         const roomId = localStorage.getItem("userName")+"-"+Math.floor(Math.random()*10000)+1;
-        localStorage.setItem("roomId",roomId);
-        // history.push("/chat");
+        const result = await axios.post("http://localhost:3001/create-room",{
+            roomId:roomId,
+            userName:localStorage.getItem("userName"),
+            link:`http://localhost:3000/chat/${roomId}`
+        });
+        console.log(result);
+        if(result.data.roomCreated)
+        {
+            console.log("post request for room creation successful");
+            alert(`room created ${roomId}`);
+            // joinRoom(e,roomId)
+        }
+    }
+    const joinRoom = async (e)=>{
+        e.preventDefault();
+        console.log(text);
+        const roomId = text;
+        const result = await axios.post("http://localhost:3001/join-room",{
+            roomId:roomId,
+            userName:localStorage.getItem("userName")
+        });
+        console.log(result);
+        if(result.data.roomJoined)
+        {
+            console.log("post request for room join successful");
+            localStorage.setItem("roomId",roomId);
+            history.push(`/chat/${roomId}`);
+        }
+        
+
     }
     useEffect(()=>{
         //open modal here
@@ -35,9 +64,6 @@ export default function HomePage() {
     },[]);
     return (
         <div>
-            {/* <Router>
-                <Route path='/chat' component={App} />
-            </Router> */}
             <h1>Hello {localStorage.getItem("userName")}</h1>
                     <Modal isOpen={modalIsOpen} onRequestClose={()=>setModalIsOpen(false)}>
                         <form onSubmit={setUserNameFn}>
@@ -47,7 +73,7 @@ export default function HomePage() {
                         </form>
                     </Modal>
                     <div className="center-div">
-                    <form onSubmit={onSubmit}>
+                    <form onSubmit={joinRoom}>
                         
                         <input placeholder="Join-Room" className = "room" type="text" value={text} onChange={(e)=>{setText(e.target.value)}}></input>
                         <input className="room-btn" type="submit" value="Submit" />
