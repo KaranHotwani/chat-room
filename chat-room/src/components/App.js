@@ -11,12 +11,25 @@ function App() {
   
   // eslint-disable-next-line
   const [chats,updateChats] = useState([]);
+  const handleLikeClick = (chat)=>{
+    console.log("like clicked",chat);
+    
+  }
   const listItems = chats.map(chat=>{
     if(chat.id%2===0)
     {
-      return <li key={chat.id}className="container" >{chat.chatData}</li>
+      return (
+      <div className="container">
+        <li key={chat.id} >{chat.chatData}</li>
+        <button className="like-btn" onClick={()=>handleLikeClick(chat)}>👍</button>
+      </div>);
     }
-    else return <li key={chat.id}className="container darker" >{chat.chatData}</li>;
+    else return (
+      <div className="container darker">
+        <li key={chat.id} >{chat.chatData}</li>
+        <button className="like-btn">👍</button>
+      </div>);
+    // <div><li key={chat.id}className="container darker" >{chat.chatData}</li></div>;
   })
 
   // const onSubmit = (e)=>{
@@ -41,11 +54,22 @@ function App() {
     fetchData();
     
 },[]);
+
+  // const getRoomChatData = async()=>{
+  //   const result = await axios.get(`http://localhost:3001/get_chats/${roomId}`);
+  //     console.log(result);
+  //     if(result.data.data.length>0)
+  //     {
+  //       var resultChats = [];
+  //       result.data.data.map(chat=>resultChats.push(chat))
+  //       updateChats(resultChats);
+  //     }
+  // }
   const updateChatFn = (data)=>{
     console.log("dataaa",data)
     const id = Math.floor(Math.random()*10000)+1;
     const chat = {id:id,chatData:data,userName:localStorage.getItem("userName")}
-    updateChats([...chats,chat]);
+    // updateChats([...chats,chat]);
     socket.emit("chat",chat,localStorage.getItem("roomId"));
   }
   socket.on("received-msg",(message)=>{

@@ -18,15 +18,19 @@ const io = require("socket.io")(httpServer, options);
 io.on("connection", socket => { 
     console.log(socket.id);
     socket.on("chat",async (chat,room)=>{
+        
         console.log("received chat ",chat," room ",room);
-        await db.collection("rooms").doc(room).collection("chats").doc().set({
+        const docRef = db.collection("rooms").doc(room).collection("chats").doc();
+        const data = {
             sentBy:chat.userName,
             chatData:chat.chatData,
             id:chat.id,
+            docId:docRef.id,
             createdAt:admin.firestore.Timestamp.now(),
             likedBy:[]
-        })
-        socket.to(room).emit("received-msg",chat);
+        }
+        await docRef.set(data)
+        socket.nsp.to(room).emit("received-msg",data);
     })
     socket.on("join-room",(roomId)=>{
         console.log("join room request on socket",roomId);
@@ -43,7 +47,7 @@ app.get("/get_chats/:roomId",async(request,response)=>{
     const roomId = request.params.roomId;
     try{
         
-        const querySnapshot = await db.collection("rooms").doc(roomId).collection("chats").orderBy('createdAt','desc').get();
+        const querySnapshot = await db.collection("rooms").doc(roomId).collection("chats").orderBy('createdAt').get();
         const data = querySnapshot.docs.map(doc=>doc.data());
         response.send({data:data,error:null});
 

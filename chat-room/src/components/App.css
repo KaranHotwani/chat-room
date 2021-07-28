@@ -39,8 +39,25 @@
   margin: 10px 0;
   list-style-type:none;
   margin-right: 50px;
+  height: 30px;
 }
 .darker {
   border-color: #ccc;
   background-color: rgb(150, 146, 146);
+}
+.like-btn {
+  background-color: #0c0a0a; /* Green */
+  border: none;
+  color: white;
+  padding: 6px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  margin-left: 95%;
+  margin-top: -100px;
+  position: sticky;
+  cursor: pointer;
+  border-radius: 50%;
 }
