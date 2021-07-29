@@ -11,24 +11,73 @@ function App() {
   
   // eslint-disable-next-line
   const [chats,updateChats] = useState([]);
-  const handleLikeClick = (chat)=>{
+  const handleLikeClick = async (chat)=>{
     console.log("like clicked",chat);
-    
+    const result = await axios.post(`http://localhost:3001/like_chat`,{
+      chatId:chat.docId,
+      userName:localStorage.getItem("userName"),
+      roomId: localStorage.getItem("roomId")
+    });
+    console.log(result);
+    window.location.reload();
   }
+  const [isHovering, setIsHovering] = useState(false);
+  const [showLikes,setShowLikes] = useState(["hi"]);
+  const handleMouseOver = (likes) => {
+    setShowLikes(likes);
+    setIsHovering(true);
+  };
+
+  const handleMouseOut = () => {
+    setShowLikes([]);
+    setIsHovering(false);
+    
+  };
   const listItems = chats.map(chat=>{
-    if(chat.id%2===0)
+    const userName = localStorage.getItem("userName");
+    if(chat.sentBy!==userName)
     {
-      return (
-      <div className="container">
-        <li key={chat.id} >{chat.chatData}</li>
-        <button className="like-btn" onClick={()=>handleLikeClick(chat)}>👍</button>
-      </div>);
+      if(chat.likedBy.includes(userName)){
+        return (
+          <div key={chat.id} className="container">
+            <li key={chat.id} >{chat.chatData}</li>
+            <button className="like-btn liked" onClick={()=>handleLikeClick(chat)}>👍</button>
+            {chat.likedBy.length>0 && <div className="count" onMouseOver={()=>handleMouseOver(chat.likedBy)} onMouseOut={handleMouseOut} >{chat.likedBy.length}</div>}
+            {/* {chat.likedBy.length} */}
+          </div>);
+      }
+      else
+      {
+        return (
+          <div key={chat.id} className="container">
+            <li key={chat.id} >{chat.chatData}</li>
+            <button className="like-btn" onClick={()=>handleLikeClick(chat)}>👍</button>
+            {chat.likedBy.length>0 && <div className="count" onMouseOver={()=>handleMouseOver(chat.likedBy)} onMouseOut={handleMouseOut} >{chat.likedBy.length}</div>}
+            {/* {chat.likedBy.length} */}
+          </div>);
+      }
     }
-    else return (
-      <div className="container darker">
-        <li key={chat.id} >{chat.chatData}</li>
-        <button className="like-btn">👍</button>
-      </div>);
+    else {
+      if(chat.likedBy.includes(userName)){
+        return (
+          <div  key={chat.id}className="container darker">
+            <li key={chat.id} >{chat.chatData}</li>
+            <button className="like-btn liked" onClick={()=>handleLikeClick(chat)}>👍</button>
+            {chat.likedBy.length>0 && <div className="count" onMouseOver={()=>handleMouseOver(chat.likedBy)} onMouseOut={handleMouseOut} >{chat.likedBy.length}</div>}
+            {/* {chat.likedBy.length} */}
+          </div>);
+      }
+      else{
+        return (
+          <div  key={chat.id}className="container darker">
+            <li key={chat.id} >{chat.chatData}</li>
+            <button className="like-btn" onClick={()=>handleLikeClick(chat)}>👍</button>
+            {chat.likedBy.length>0 && <div className="count" onMouseOver={()=>handleMouseOver(chat.likedBy)} onMouseOut={handleMouseOut} >{chat.likedBy.length}</div>}
+            {/* {chat.likedBy.length} */}
+          </div>);
+      }
+
+    }
     // <div><li key={chat.id}className="container darker" >{chat.chatData}</li></div>;
   })
 
@@ -77,16 +126,21 @@ function App() {
     updateChats([...chats,message]);
   })
   return (
-    
-    <div className="App">
-        <h1 className="header"> Welcome to Chat Room - {localStorage.getItem("roomId")}</h1>
-        <div className="chats">
-          <ul>{listItems}</ul>
-        </div>
-        
-        <ChatBox updateChatFn={updateChatFn}/>
-      {/* <HomePage/> */}
+    <div>
+      <div className="App">
+              <h1 className="header"> Welcome to Chat Room - {localStorage.getItem("roomId")}</h1>
+              <div className="chats">
+                <ul>{listItems}</ul>
+              </div>
+              
+              <ChatBox updateChatFn={updateChatFn}/>
+            {/* <HomePage/> */}
+      </div>
+      <div className="like-box">
+        {isHovering && <ul>{showLikes.map(like=><div>{like}</div>)}</ul>}
+      </div> 
     </div>
+    
   );
 }
 

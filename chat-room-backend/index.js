@@ -125,7 +125,7 @@ app.post("/join-room",async(request,response)=>{
     }
 })
 
-app.post("/like-chat",async(request,response)=>{
+app.post("/like_chat",async(request,response)=>{
     const body = request.body;
     console.log(body);
     try{
